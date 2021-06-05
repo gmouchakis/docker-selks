@@ -55,9 +55,10 @@ services:
       - pcap-storage:/pcap
     # You will want to put an actual interface for suricata to listen to here if `eth0`
     # is not to your liking.
-    command: bash -c "suricata -c /etc/suricata/suricata.yaml -i eth0"
+    command: bash -c "suricata -c /etc/suricata/suricata.yaml -i enp1s0"
     # To profile a pcap, use
     #command: bash -c "suricata -c /etc/suricata/suricata.yaml -r /pcap/${PCAPNAME}.pcap"
+    #command: bash -c "suricata -c /etc/suricata/suricata.yaml -r /pcap"
 
   elasticsearch:
     <<: *base
@@ -112,7 +113,8 @@ services:
 
   evebox:
     <<: *base
-    image: jasonish/evebox:latest
+    #image: jasonish/evebox:latest
+    image: jasonish/evebox:0.11.1
     ports:
       - "5636:5636"
     depends_on:

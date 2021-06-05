@@ -33,16 +33,26 @@ RUN apt-get update && \
     libyaml-0-2 libyaml-dev pkg-config zlib1g zlib1g-dev libcap-ng-dev libcap-ng0 \
     make libmagic-dev libjansson-dev git-core \
     libnetfilter-queue-dev libnetfilter-queue1 libnfnetlink-dev libnfnetlink0 \
-    ca-certificates curl && \
+    ca-certificates curl rustc cargo python3-setuptools python3-pip && \
+    cargo install --force --debug --version 0.14.1 cbindgen && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install suricata-update
+
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Add user and group
 RUN addgroup --gid 2000 suri && \
     adduser --system --uid 2000 --gid 2000 suri && \
 # build with nfq support, profiling support and also download emerging threats (thanks to make install-full)
    git clone https://github.com/OISF/suricata.git && cd suricata && \
+   git checkout suricata-6.0.1 && \
    git clone https://github.com/OISF/libhtp.git -b 0.5.x && \
+   cd suricata-update && \
+   # curl -L https://github.com/OISF/suricata-update/archive/master.tar.gz | tar zxvf - --strip-components=1 && \
+   curl -L https://github.com/OISF/suricata-update/archive/refs/tags/1.2.2.tar.gz | tar zxvf - --strip-components=1 && \
+   cd .. && \
    ./autogen.sh && \
    ./configure --enable-profiling --enable-nfqueue --prefix=/usr --sysconfdir=/etc --localstatedir=/var && \
 # --enable-rust  # not working yet
